@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+</head>
+<body>
+    <h1>Payment Form</h1>
+    <form id="payment-form" action="{{ url_for('process_payment', item_id=item_id) }}" method="POST">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+        <br>
+        <label for="total-price">Total Price:</label>
+        <input type="text" id="total-price" name="total-price" readonly>
+        <br>
+        <button type="submit">Pay Now</button>
+    </form>
+
+    <script>
+        // Get references to the quantity and total price input fields
+        const quantityInput = document.getElementById('quantity');
+        const totalPriceInput = document.getElementById('total-price');
+
+        // Get the item price from the server-side template variable
+        const itemPrice = {{ item.price }};
+
+        // Function to calculate and update the total price
+        function updateTotalPrice() {
+            const quantity = quantityInput.value;
+            const totalPrice = quantity * itemPrice;
+            totalPriceInput.value = totalPrice.toFixed(2); // Format total price with two decimal places
+        }
+
+        // Add event listener to quantity input field
+        quantityInput.addEventListener('input', updateTotalPrice);
+
+        // Calculate total price on page load
+        updateTotalPrice();
+    </script>
+</body>
+</html>

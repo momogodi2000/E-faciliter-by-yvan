@@ -159,34 +159,27 @@ def display_items():
 def about():
     return render_template('about.html')
 
-@app.route('/update-item/<int:item_id>', methods=['POST'])
-def update_item(item_id):
+@app.route('/update-item/<int:item_id>', methods=['GET', 'POST'])
+def update_item_form(item_id):
     item = Item.query.get(item_id)
-    if item:
-        name = request.form['name']
-        price = request.form['price']
-        picture = request.files['image']
-        filename = secure_filename(picture.filename)
-        picture.save(os.path.join(app.config['UPLOAD'], filename))
-
-        item.name = name
-        item.price = price
-        item.picture = filename
-
+    if request.method == 'POST':
+        # Logic to update item based on form submission
+        item.name = request.form['name']
+        item.price = request.form['price']
+        item.qty = request.form['qty']
+        item.minimum_qty = request.form['minimum_qty']
+        item.max_qty = request.form['max_qty']
         db.session.commit()
-        return jsonify({'message': 'Item updated successfully'}), 200
-    else:
-        return jsonify({'message': 'Item not found'}), 404
+        return redirect(url_for('admin'))  # Redirect to admin page after updating item
+    return render_template('update_item_form.html', item=item)
 
-@app.route('/delete-item/<int:item_id>', methods=['DELETE'])
+@app.route('/delete-item/<int:item_id>', methods=['POST'])
 def delete_item(item_id):
     item = Item.query.get(item_id)
     if item:
         db.session.delete(item)
         db.session.commit()
-        return jsonify({'message': 'Item deleted successfully'}), 200
-    else:
-        return jsonify({'message': 'Item not found'}), 404
+    return redirect(url_for('admin'))  # Redirect to admin page after deleting item
 
 
 class Contact(db.Model):

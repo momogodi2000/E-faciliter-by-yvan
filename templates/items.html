@@ -58,7 +58,7 @@
                     </td>
                     <td>
                         <a href="{{ url_for('update_item_form', item_id=item.id) }}" class="btn btn-primary">Update</a>
-                        <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn btn-danger">Delete</a>
+                        <button onclick="deleteItemPrompt()" class="btn btn-danger">Delete Item</button>
                     </td>
                 </tr>
                 {% endfor %}

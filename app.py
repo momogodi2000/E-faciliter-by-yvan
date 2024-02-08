@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import re  # Import the 're' module
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cairocoders-ednalan'
@@ -173,13 +174,15 @@ def update_item_form(item_id):
         return redirect(url_for('admin'))  # Redirect to admin page after updating item
     return render_template('update_item_form.html', item=item)
 
-@app.route('/delete-item/<int:item_id>', methods=['POST'])
+@app.route('/delete-item/<int:item_id>', methods=['DELETE'])
 def delete_item(item_id):
     item = Item.query.get(item_id)
     if item:
         db.session.delete(item)
         db.session.commit()
-    return redirect(url_for('admin'))  # Redirect to admin page after deleting item
+        return jsonify({'message': 'Item deleted successfully'}), 200
+    else:
+        return jsonify({'message': 'Item not found'}), 404
 
 
 class Contact(db.Model):

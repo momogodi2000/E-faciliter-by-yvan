@@ -113,8 +113,9 @@ def insert_data():
     qty = request.form['qty']
     minimum_qty = request.form['minimum_qty']
     max_qty = request.form['max_qty']
+    print(f"Received form data: Name: {name}, Price: {price}, Quantity: {qty}, Min Qty: {minimum_qty}, Max Qty: {max_qty}")
+
     image = request.files['image']
-    
     # Save the image to the appropriate directory
     image_path = 'static/image/' + secure_filename(image.filename)
     image.save(image_path)

@@ -106,25 +106,6 @@ class Item(db.Model):
 def crud():
     return render_template('crud.html')
 
-
-
-@app.route('/user')
-def user():
-    users = Users.query.all()  # Fetch all users from the database
-    return render_template('user.html', users=users)  # Pass users to the template
-
-
-@app.route('/delete_user', methods=['POST'])
-def delete_user():
-    user_id = request.form.get('user_id')  # Retrieve the user ID from the form data
-    user = Users.query.get(user_id)  # Retrieve the user by ID
-    if user:
-        db.session.delete(user)  # Delete the user from the database
-        db.session.commit()  # Commit the changes
-
-    # Redirect back to the admin page after deleting the user
-    return redirect(url_for('user'))
-
 @app.route('/insert', methods=['POST'])
 def insert_data():
     name = request.form['name']
@@ -146,6 +127,24 @@ def insert_data():
     db.session.commit()
 
     return 'Data inserted successfully!'
+
+@app.route('/user')
+def user():
+    users = Users.query.all()  # Fetch all users from the database
+    return render_template('user.html', users=users)  # Pass users to the template
+
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    user_id = request.form.get('user_id')  # Retrieve the user ID from the form data
+    user = Users.query.get(user_id)  # Retrieve the user by ID
+    if user:
+        db.session.delete(user)  # Delete the user from the database
+        db.session.commit()  # Commit the changes
+
+    # Redirect back to the admin page after deleting the user
+    return redirect(url_for('user'))
+
 
 
 # Route to generate the page displaying data from the item table
@@ -227,6 +226,12 @@ def process_payment(item_id):
 
     # After processing the payment, you can redirect the user to a thank you page or confirmation page
     return 'Payment processed successfully. Total amount: {}'.format(total_price)
+
+
+@app.route('/contact-messages')
+def display_contact_messages():
+    messages = Contact.query.all()  # Fetch all contact messages from the database
+    return render_template('contact_messages.html', messages=messages)
 
 
 if __name__ == '__main__':

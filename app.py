@@ -208,6 +208,7 @@ def submit_contact_form():
 
     return jsonify({'message': 'Message sent successfully!'})
 
+
 @app.route('/order')
 def order():
     items = Item.query.all()

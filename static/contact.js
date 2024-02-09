@@ -1,5 +1,5 @@
-$(document).ready(function(){
-    $('#contactForm').submit(function(event){
+$(document).ready(function() {
+    $('#contactForm').submit(function(event) {
         event.preventDefault();
         var name = $('#name').val();
         var email = $('#email').val();
@@ -14,11 +14,11 @@ $(document).ready(function(){
                 email: email,
                 message: message
             },
-            success: function(response){
+            success: function(response) {
                 alert('Message sent successfully!');
                 // You can perform additional actions here after the message is sent successfully
             },
-            error: function(xhr, status, error){
+            error: function(xhr, status, error) {
                 console.error('Error:', error);
                 alert('Failed to send message. Please try again later.');
                 // You can handle errors here

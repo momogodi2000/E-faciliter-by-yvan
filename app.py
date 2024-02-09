@@ -201,37 +201,43 @@ def submit_contact_form():
     name = request.form['name']
     email = request.form['email']
     message = request.form['message']
-    
+
     new_contact = Contact(name=name, email=email, message=message)
     db.session.add(new_contact)
     db.session.commit()
 
     return jsonify({'message': 'Message sent successfully!'})
 
-
 @app.route('/order')
 def order():
     items = Item.query.all()
     return render_template('order.html', items=items)
 
-@app.route('/payment/<int:item_id>', methods=['POST'])
-def process_payment(item_id):
-    # Get the quantity entered by the user from the form
-    quantity = int(request.form['quantity'])
-
-    # Retrieve the item from the database based on item_id
-    item = Item.query.get(item_id)
-
-    # Update the quantity in the database
-    item.qty -= quantity
-    db.session.commit()
-
-    # Calculate the total price based on the quantity and item price
-    total_price = quantity * item.price
-
-    # After processing the payment, you can redirect the user to a thank you page or confirmation page
-    return 'Payment processed successfully. Total amount: {}'.format(total_price)
-
+@app.route('/payment/<int:item_id>', methods=['GET', 'POST'])
+def payment(item_id):
+    if request.method == 'GET':
+        item = Item.query.get(item_id)
+        if item:
+            return render_template('payment.html', product_name=item.name, quantity=item.qty, max_quantity=item.max_qty, min_quantity=item.minimum_qty)
+        else:
+            return 'Item not found', 404
+    elif request.method == 'POST':
+        # Get the quantity ordered from the form
+        ordered_quantity = int(request.form['ordered_quantity'])
+        
+        # Get the item from the database
+        item = Item.query.get(item_id)
+        if item:
+            # Check if there is enough stock for the order
+            if item.qty >= ordered_quantity:
+                # Subtract the ordered quantity from the stock quantity in the database
+                item.qty -= ordered_quantity
+                db.session.commit()
+                return redirect(url_for('dashboard'))  # Redirect to dashboard or a confirmation page
+            else:
+                return 'Insufficient stock', 400  # Return an error if there is not enough stock
+        else:
+            return 'Item not found', 404
 
 @app.route('/contact-messages')
 def display_contact_messages():
